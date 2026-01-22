@@ -79,6 +79,11 @@ pub enum StorageKey {
     NextPoolId,
     IsPaused,
     Admin,
+    TokenName,
+    TokenSymbol,
+    TokenDecimals,
+    TotalSupply,
+    TokenBalance,
 }
 
 #[cfg(test)]

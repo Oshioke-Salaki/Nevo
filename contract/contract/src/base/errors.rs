@@ -19,4 +19,7 @@ pub enum CrowdfundingError {
     ContractAlreadyPaused = 13,
     ContractAlreadyUnpaused = 14,
     ContractAlreadyInitialized = 15,
+    InsufficientBalance = 16,
+    InvalidAmount = 17,
+    UnauthorizedMinting = 18,
 }
