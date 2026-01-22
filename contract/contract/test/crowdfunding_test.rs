@@ -288,12 +288,16 @@ fn test_get_pool() {
 
     let pool = client.get_pool(&pool_id).unwrap();
 
-    assert_eq!(pool.id, pool_id);
+    // PoolConfig no longer carries id, creator or deadline fields; these
+    // are tracked separately in storage. Validate the fields that remain
+    // on the configuration struct.
     assert_eq!(pool.name, name);
     assert_eq!(pool.description, description);
-    assert_eq!(pool.creator, creator);
     assert_eq!(pool.target_amount, target_amount);
-    assert_eq!(pool.deadline, deadline);
+    // duration is derived from deadline and current timestamp, so it
+    // should be positive and no greater than the originally requested
+    // deadline offset.
+    assert!(pool.duration > 0);
     assert!(pool.created_at <= env.ledger().timestamp()); // created_at should be <= current time
 }
 

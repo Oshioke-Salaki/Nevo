@@ -96,15 +96,18 @@ impl CrowdfundingTrait for CrowdfundingContract {
             return Err(CrowdfundingError::PoolAlreadyExists);
         }
 
-        // Create pool configuration
+        // Derive pool duration from requested deadline and current timestamp
+        let now = env.ledger().timestamp();
+        let duration = deadline.saturating_sub(now);
+
+        // Create pool configuration (persistent view)
         let pool_config = PoolConfig {
-            id: pool_id,
             name: name.clone(),
             description: description.clone(),
-            creator: creator.clone(),
             target_amount,
-            deadline,
-            created_at: env.ledger().timestamp(),
+            is_private: false,
+            duration,
+            created_at: now,
         };
 
         // Store pool configuration
@@ -116,11 +119,7 @@ impl CrowdfundingTrait for CrowdfundingContract {
 
         // Initialize empty metrics
         let metrics_key = StorageKey::PoolMetrics(pool_id);
-        let initial_metrics = PoolMetrics {
-            total_donations: 0,
-            donor_count: 0,
-            last_donation_at: 0,
-        };
+        let initial_metrics = PoolMetrics::new();
         env.storage().instance().set(&metrics_key, &initial_metrics);
 
         // Update next pool ID
